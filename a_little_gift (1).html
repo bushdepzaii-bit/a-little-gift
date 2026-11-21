@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>A little gift</title>
+<style>
+:root{--bg:#faf7f1;--paper:#fffdf9;--brown:#755644;--ink:#49382f;--muted:#9b887c;--line:#eee5dc;--accent:#b98770;--green:#3b7a57;--green-bg:#eaf4ee;--red:#b54747;--red-bg:#fbeeee;--amber:#a66e22;--amber-bg:#fdf4e6}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,serif}button,input,select{font:inherit}button{cursor:pointer}
+header{height:72px;padding:0 7%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);position:sticky;top:0;background:#faf7f1ed;backdrop-filter:blur(10px);z-index:2}
+.brand{font-size:23px;color:var(--brown)}
+nav a{font:13px Arial;color:var(--brown);text-decoration:none;margin-left:22px;position:relative}
+.badge-count{background:var(--accent);color:#fff;font-size:10px;padding:2px 6px;border-radius:10px;margin-left:4px;vertical-align:middle}
+.hero{max-width:1150px;margin:auto;min-height:510px;padding:55px 7%;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:25px}
+.hero h1{font-size:clamp(65px,9vw,105px);line-height:.9;letter-spacing:-5px;font-weight:400;color:var(--brown);margin:20px 0;animation:rise .9s both}
+.hero p{font-size:16px;line-height:1.8;color:#927e70;max-width:390px}
+.eyebrow{font:11px Arial;letter-spacing:.2em;color:var(--muted)}
+.primary{border:0;border-radius:30px;background:var(--brown);color:white;padding:12px 22px;font:12px Arial;letter-spacing:.08em;transition:.25s}
+.primary:hover{background:#98725d;transform:translateY(-1px)}
+.secondary{border:1px solid var(--line);border-radius:30px;background:#fff;color:var(--brown);padding:10px 16px;font:12px Arial;transition:.2s}
+.secondary:hover{background:#f5efe8}
+.bear-wrap{height:360px;display:grid;place-items:center;position:relative}
+.bear{width:min(340px,90%);filter:drop-shadow(0 15px 15px #75564422);animation:bob 4s ease-in-out infinite}
+.spark{position:absolute;color:#bd9b83;font-size:23px;animation:twinkle 2s infinite alternate}
+.spark.a{top:15%;left:15%}.spark.b{right:12%;top:30%;animation-delay:.8s}.spark.c{bottom:12%;left:22%;animation-delay:1.2s}
+section{max-width:1150px;margin:auto;padding:65px 7%}
+.heading{text-align:center;margin-bottom:35px}
+h2{font-size:40px;font-weight:400;color:var(--brown);margin:10px 0}
+.hint{font:13px Arial;color:var(--muted)}
+.products{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.product{background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:13px;cursor:pointer;transition:.3s}
+.product:hover{transform:translateY(-7px);box-shadow:0 15px 30px #5a44351a}
+.art{height:190px;border-radius:12px;display:grid;place-items:center;font-size:78px;background:linear-gradient(140deg,#f4e9df,#eee0d7)}
+.product h3{font-size:19px;font-weight:400;margin:16px 4px 7px}
+.price{font:13px Arial;color:var(--accent);margin:0 4px 8px}
+.code{font:11px Arial;color:var(--muted);margin:0 4px}
+.reveal{opacity:0;transform:translateY(20px);transition:.7s}.reveal.show{opacity:1;transform:none}
+footer{text-align:center;padding:30px;border-top:1px solid var(--line);font:11px Arial;color:var(--muted)}
+
+/* Modals */
+.overlay{display:none;position:fixed;inset:0;background:#30251f77;z-index:5;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.overlay.show{display:flex}
+.modal{background:var(--paper);width:min(510px,100%);max-height:90vh;overflow:auto;border-radius:20px;padding:27px;position:relative;animation:rise .25s;box-shadow:0 20px 50px #2b1e1633}
+.modal.admin-modal{width:min(860px,100%);padding:28px 32px}
+.close{position:absolute;right:18px;top:14px;border:0;background:none;font-size:26px;color:var(--muted)}
+.close:hover{color:var(--brown)}
+.modal h2{font-size:30px;margin:6px 0 18px}
+.field{margin:14px 0}
+.field label{display:block;font:11px Arial;letter-spacing:.08em;color:var(--muted);margin-bottom:7px}
+.field input,.field select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:white;color:var(--ink);font-family:Arial,sans-serif;font-size:13px}
+.qty{display:flex;align-items:center;gap:13px}.qty button{border:1px solid var(--line);background:white;border-radius:50%;width:30px;height:30px}
+.total{margin:16px 0;color:var(--brown);font-size:18px}
+.qr{background:#f4eee7;border:1px dashed #cdb9aa;border-radius:12px;padding:22px;text-align:center;font:12px Arial;color:var(--muted)}
+.note{font:11px/1.6 Arial;color:var(--muted)}
+
+/* Khu Quản Lý Đơn Nâng Cao */
+.admin-header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:20px}
+.admin-actions{display:flex;gap:8px;flex-wrap:wrap}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.stat-label{font:11px Arial;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.stat-val{font-size:22px;color:var(--brown);margin-top:6px;font-weight:bold;font-family:Arial,sans-serif}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:#fff;color:var(--muted);padding:7px 14px;border-radius:20px;font:12px Arial;transition:.2s}
+.tab.active{background:var(--brown);color:#fff;border-color:var(--brown)}
+.search-box{padding:8px 14px;border:1px solid var(--line);border-radius:20px;font:12px Arial;width:230px;background:#fff}
+
+.orders-list{display:grid;gap:12px;max-height:46vh;overflow-y:auto;padding-right:4px}
+.order-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;grid-template-columns:1.2fr 1.2fr auto;gap:16px;align-items:center;font:13px/1.6 Arial}
+.order-id{font-weight:bold;color:var(--brown);font-size:14px}
+.order-time{font-size:11px;color:var(--muted)}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:bold;margin-left:6px}
+.badge.pending{background:var(--amber-bg);color:var(--amber)}
+.badge.approved{background:var(--green-bg);color:var(--green)}
+.badge.rejected{background:var(--red-bg);color:var(--red)}
+.proof-link{color:var(--accent);text-decoration:underline;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:4px;margin-top:4px;background:none;border:0;padding:0}
+.order-btns{display:flex;flex-direction:column;gap:6px;min-width:105px}
+.btn-approve{border:0;border-radius:8px;padding:7px 12px;background:var(--green-bg);color:var(--green);font-weight:bold;font-size:12px}
+.btn-approve:hover{background:#d5ebde}
+.btn-reject{border:0;border-radius:8px;padding:7px 12px;background:var(--red-bg);color:var(--red);font-weight:bold;font-size:12px}
+.btn-reject:hover{background:#f5dada}
+.btn-del{border:0;background:none;color:var(--muted);font-size:11px;text-decoration:underline;margin-top:2px}
+.proof-modal-img{max-width:100%;max-height:65vh;border-radius:12px;display:block;margin:12px auto;border:1px solid var(--line)}
+
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-10px) rotate(1deg)}}
+@keyframes twinkle{from{opacity:.3;transform:scale(.8)}to{opacity:1;transform:scale(1.15)}}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@media(max-width:768px){
+  header{padding:0 5%}nav a{margin-left:12px;font-size:11px}
+  .hero{grid-template-columns:1fr;text-align:center;padding-top:48px;gap:0}
+  .hero p{margin:0 auto}.bear-wrap{height:285px}.products{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .order-card{grid-template-columns:1fr;gap:10px}
+  .order-btns{flex-direction:row;flex-wrap:wrap}
+  .search-box{width:100%}
+}
+</style></head><body>
+
+<header>
+  <div class="brand">A little gift</div>
+  <nav>
+    <a href="#products">Sản phẩm</a>
+    <a href="#about">Giới thiệu</a>
+    <a href="#" onclick="openAdmin();return false">Quản lý đơn<span class="badge-count" id="navPendingCount" style="display:none">0</span></a>
+  </nav>
+</header>
+
+<main>
+  <div class="hero" id="about">
+    <div>
+      <div class="eyebrow">A LITTLE GIFT SHOP</div>
+      <h1>A little<br>gift</h1>
+      <p>Món quà nhỏ xinh, gửi trao niềm vui và lưu giữ những khoảnh khắc đáng nhớ.</p>
+      <button class="primary" onclick="document.querySelector('#products').scrollIntoView()">KHÁM PHÁ SẢN PHẨM</button>
+    </div>
+    <div class="bear-wrap">
+      <span class="spark a">✦</span><span class="spark b">✧</span><span class="spark c">✦</span>
+      <svg class="bear" viewBox="0 0 340 340" aria-label="Chú gấu nâu">
+        <ellipse cx="170" cy="304" rx="94" ry="15" fill="#c9b3a4" opacity=".3"/>
+        <circle cx="105" cy="75" r="43" fill="#9a7059"/><circle cx="235" cy="75" r="43" fill="#9a7059"/>
+        <circle cx="105" cy="75" r="23" fill="#d8b8a4"/><circle cx="235" cy="75" r="23" fill="#d8b8a4"/>
+        <ellipse cx="170" cy="192" rx="94" ry="105" fill="#9a7059"/><ellipse cx="170" cy="112" rx="91" ry="83" fill="#a77d64"/>
+        <ellipse cx="170" cy="225" rx="58" ry="62" fill="#e7cdb9"/><ellipse cx="135" cy="111" rx="8" ry="11" fill="#49372e"/>
+        <ellipse cx="205" cy="111" rx="8" ry="11" fill="#49372e"/><ellipse cx="170" cy="139" rx="16" ry="12" fill="#49372e"/>
+        <path d="M160 151Q170 162 180 151" fill="none" stroke="#49372e" stroke-width="4" stroke-linecap="round"/>
+        <ellipse cx="119" cy="145" rx="13" ry="8" fill="#d99589" opacity=".65"/><ellipse cx="221" cy="145" rx="13" ry="8" fill="#d99589" opacity=".65"/>
+        <path d="M105 206Q72 195 66 230Q68 260 108 258M235 206Q268 195 274 230Q272 260 232 258" fill="none" stroke="#a77d64" stroke-width="27" stroke-linecap="round"/>
+        <path d="M142 274Q126 300 143 310Q160 318 170 297Q180 318 197 310Q214 300 198 274" fill="#9a7059"/>
+      </svg>
+    </div>
+  </div>
+
+  <section id="products">
+    <div class="heading">
+      <div class="eyebrow">OUR LITTLE COLLECTION</div>
+      <h2>Món quà nhỏ</h2>
+      <div class="hint">Chọn một món quà bạn yêu thích</div>
+    </div>
+    <div class="products reveal" id="productGrid"></div>
+  </section>
+</main>
+
+<footer>A little gift · Cảm ơn bạn đã ghé thăm ♡</footer>
+
+<!-- Modal Đặt Hàng -->
+<div class="overlay" id="orderOverlay">
+  <div class="modal">
+    <button class="close" onclick="closeModal('orderOverlay')">×</button>
+    <div class="eyebrow">ĐẶT HÀNG</div>
+    <h2 id="productName">Sản phẩm</h2>
+    <div class="field">
+      <label>SỐ LƯỢNG</label>
+      <div class="qty"><button onclick="changeQty(-1)">−</button><strong id="qty">1</strong><button onclick="changeQty(1)">+</button></div>
+    </div>
+    <div class="total" id="total">Tổng: 25.000đ</div>
+    <div class="field"><label>HỌ VÀ TÊN</label><input id="customer" placeholder="Tên của bạn"></div>
+    <div class="field"><label>LỚP</label><input id="className" placeholder="Ví dụ: 10A1"></div>
+    <div class="qr">KHU VỰC MÃ QR NGÂN HÀNG<br><br>QR và thông tin tài khoản sẽ được cập nhật sau.</div>
+    <p class="note">Nội dung chuyển khoản: <b id="transferText">Tên + Lớp + Mã đơn</b></p>
+    <div class="field"><label>ẢNH XÁC NHẬN CHUYỂN KHOẢN</label><input type="file" id="proof" accept="image/*"></div>
+    <button class="primary" style="width:100%" onclick="submitOrder()">GỬI ĐƠN CHỜ DUYỆT</button>
+  </div>
+</div>
+
+<!-- Modal Quản Lý Đơn -->
+<div class="overlay" id="adminOverlay">
+  <div class="modal admin-modal" id="adminModalBox">
+    <button class="close" onclick="closeModal('adminOverlay')">×</button>
+    <div id="adminContent"></div>
+  </div>
+</div>
+
+<!-- Modal Xem Ảnh Biên Lai -->
+<div class="overlay" id="proofOverlay" style="z-index:6">
+  <div class="modal" style="text-align:center">
+    <button class="close" onclick="closeModal('proofOverlay')">×</button>
+    <div class="eyebrow">XÁC NHẬN THANH TOÁN</div>
+    <h3 id="proofTitle" style="margin:8px 0;color:var(--brown)">Biên lai chuyển khoản</h3>
+    <img id="proofImg" class="proof-modal-img" src="" alt="Biên lai">
+    <button class="primary" onclick="closeModal('proofOverlay')">ĐÓNG</button>
+  </div>
+</div>
+
+<script>
+const defaultProducts = [
+  {name:'Gấu nhỏ đáng yêu', price:25000, code:'AG01', stock:20, icon:'🧸', bg:'linear-gradient(140deg,#f4e9df,#eee0d7)'},
+  {name:'Mây pastel', price:30000, code:'AG02', stock:15, icon:'☁️', bg:'linear-gradient(140deg,#e8eef2,#dce5e9)'},
+  {name:'Hoa nắng', price:20000, code:'AG03', stock:18, icon:'🌼', bg:'linear-gradient(140deg,#f6f0d9,#eee5c5)'}
+];
+
+let products = JSON.parse(localStorage.getItem('ag_products')) || defaultProducts;
+let orders = JSON.parse(localStorage.getItem('ag_orders')) || [];
+let selected = 0, quantity = 1, isAdminLogged = false, currentFilter = 'Tất cả', searchQuery = '';
+
+const money = n => n.toLocaleString('vi-VN') + 'đ';
+
+function saveState() {
+  localStorage.setItem('ag_products', JSON.stringify(products));
+  localStorage.setItem('ag_orders', JSON.stringify(orders));
+  updateBadge();
+}
+
+function updateBadge() {
+  const pending = orders.filter(o => o.status === 'Chờ duyệt').length;
+  const badge = document.getElementById('navPendingCount');
+  if (pending > 0) {
+    badge.textContent = pending;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function renderProducts() {
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML = products.map((p, i) => `
+    <article class="product" onclick="choose(${i})">
+      <div class="art" style="background:${p.bg}">${p.icon}</div>
+      <h3>${p.name}</h3>
+      <p class="price">${money(p.price)}</p>
+      <p class="code">Mã sản phẩm: ${p.code} · ${p.stock > 0 ? 'Còn ' + p.stock : '<b style="color:var(--red)">Hết hàng</b>'}</p>
+    </article>
+  `).join('');
+}
+
+function choose(i) {
+  if (products[i].stock <= 0) { alert('Sản phẩm này hiện đã hết hàng.'); return; }
+  selected = i;
+  quantity = 1;
+  document.getElementById('productName').textContent = products[i].name;
+  updateTotal();
+  document.getElementById('orderOverlay').classList.add('show');
+}
+
+function changeQty(n) {
+  const maxStock = products[selected].stock;
+  quantity = Math.max(1, Math.min(maxStock, quantity + n));
+  updateTotal();
+}
+
+function updateTotal() {
+  document.getElementById('qty').textContent = quantity;
+  document.getElementById('total').textContent = 'Tổng: ' + money(products[selected].price * quantity);
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+function submitOrder() {
+  const name = document.getElementById('customer').value.trim();
+  const cls = document.getElementById('className').value.trim();
+  const file = document.getElementById('proof').files[0];
+
+  if (!name || !cls) { alert('Vui lòng nhập họ tên và lớp.'); return; }
+  if (!file) { alert('Vui lòng chọn ảnh xác nhận chuyển khoản.'); return; }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const id = 'AG-' + Math.floor(100000 + Math.random() * 900000);
+    const now = new Date().toLocaleString('vi-VN', {hour:'2-digit', minute:'2-digit', day:'2-digit', month:'2-digit'});
+    orders.unshift({
+      id,
+      time: now,
+      name,
+      cls,
+      code: products[selected].code,
+      item: products[selected].name,
+      qty: quantity,
+      total: products[selected].price * quantity,
+      status: 'Chờ duyệt',
+      proofName: file.name,
+      proofData: e.target.result
+    });
+    saveState();
+    document.getElementById('customer').value = '';
+    document.getElementById('className').value = '';
+    document.getElementById('proof').value = '';
+    alert(`Đã gửi đơn ${id} thành công!\nNội dung chuyển khoản: ${name} + ${cls} + ${id}`);
+    closeModal('orderOverlay');
+  };
+  reader.readAsDataURL(file);
+}
+
+function openAdmin() {
+  const box = document.getElementById('adminModalBox');
+  if (!isAdminLogged) {
+    box.classList.remove('admin-modal');
+    document.getElementById('adminContent').innerHTML = `
+      <div class="eyebrow">PRIVATE AREA</div>
+      <h2>Đăng nhập Quản trị</h2>
+      <div class="field"><label>MÃ PIN QUẢN LÝ</label><input id="pin" type="password" placeholder="Nhập PIN (1234)" onkeydown="if(event.key==='Enter')loginAdmin()"></div>
+      <button class="primary" style="width:100%" onclick="loginAdmin()">ĐĂNG NHẬP</button>
+      <p class="note" style="margin-top:12px">PIN mặc định: 1234</p>
+    `;
+  } else {
+    renderAdminDashboard();
+  }
+  document.getElementById('adminOverlay').classList.add('show');
+}
+
+function loginAdmin() {
+  if (document.getElementById('pin').value !== '1234') {
+    alert('Mã PIN chưa đúng.');
+    return;
+  }
+  isAdminLogged = true;
+  renderAdminDashboard();
+}
+
+function logoutAdmin() {
+  isAdminLogged = false;
+  openAdmin();
+}
+
+function renderAdminDashboard() {
+  const box = document.getElementById('adminModalBox');
+  box.classList.add('admin-modal');
+
+  const totalOrders = orders.length;
+  const pendingCount = orders.filter(o => o.status === 'Chờ duyệt').length;
+  const approvedCount = orders.filter(o => o.status === 'Đã duyệt').length;
+  const revenue = orders.filter(o => o.status === 'Đã duyệt').reduce((sum, o) => sum + o.total, 0);
+
+  const filtered = orders.filter(o => {
+    const matchTab = currentFilter === 'Tất cả' || o.status === currentFilter;
+    const q = searchQuery.toLowerCase();
+    const matchSearch = !q || o.id.toLowerCase().includes(q) || o.name.toLowerCase().includes(q) || o.cls.toLowerCase().includes(q);
+    return matchTab && matchSearch;
+  });
+
+  const tabs = ['Tất cả', 'Chờ duyệt', 'Đã duyệt', 'Từ chối'];
+
+  document.getElementById('adminContent').innerHTML = `
+    <div class="admin-header">
+      <div>
+        <div class="eyebrow">ADMIN DASHBOARD</div>
+        <h2 style="margin:4px 0 0">Quản lý đơn hàng</h2>
+      </div>
+      <div class="admin-actions">
+        <button class="secondary" onclick="exportCSV()">⬇ Xuất Excel (CSV)</button>
+        <button class="secondary" onclick="resetStock()">↻ Đặt lại kho</button>
+        <button class="secondary" onclick="logoutAdmin()">Đăng xuất</button>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Tổng đơn hàng</div><div class="stat-val">${totalOrders}</div></div>
+      <div class="stat-card"><div class="stat-label">Chờ duyệt</div><div class="stat-val" style="color:var(--amber)">${pendingCount}</div></div>
+      <div class="stat-card"><div class="stat-label">Đã duyệt</div><div class="stat-val" style="color:var(--green)">${approvedCount}</div></div>
+      <div class="stat-card"><div class="stat-label">Doanh thu duyệt</div><div class="stat-val">${money(revenue)}</div></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="tabs">
+        ${tabs.map(t => `<button class="tab ${currentFilter === t ? 'active' : ''}" onclick="setFilter('${t}')">${t}</button>`).join('')}
+      </div>
+      <input class="search-box" placeholder="Tìm mã đơn, tên, lớp..." value="${searchQuery}" oninput="setSearch(this.value)">
+    </div>
+
+    <div class="orders-list">
+      ${filtered.length ? filtered.map(o => {
+        const badgeClass = o.status === 'Đã duyệt' ? 'approved' : (o.status === 'Từ chối' ? 'rejected' : 'pending');
+        return `
+        <div class="order-card">
+          <div>
+            <div><span class="order-id">${o.id}</span> <span class="badge ${badgeClass}">${o.status}</span></div>
+            <div style="margin-top:4px"><b>${o.name}</b> · Lớp <b>${o.cls}</b></div>
+            <div class="order-time">Đặt lúc: ${o.time}</div>
+          </div>
+          <div>
+            <div>${o.item} × <b>${o.qty}</b></div>
+            <div style="color:var(--brown);font-weight:bold">${money(o.total)}</div>
+            <button class="proof-link" onclick="viewProof('${o.id}')">🖼 Xem ảnh chuyển khoản</button>
+          </div>
+          <div class="order-btns">
+            ${o.status !== 'Đã duyệt' ? `<button class="btn-approve" onclick="setStatus('${o.id}','Đã duyệt')">✓ Duyệt đơn</button>` : ''}
+            ${o.status !== 'Từ chối' ? `<button class="btn-reject" onclick="setStatus('${o.id}','Từ chối')">✕ Từ chối</button>` : ''}
+            <button class="btn-del" onclick="deleteOrder('${o.id}')">Xóa đơn</button>
+          </div>
+        </div>`;
+      }).join('') : '<p class="note" style="text-align:center;padding:30px 0">Không tìm thấy đơn hàng nào phù hợp.</p>'}
+    </div>
+  `;
+}
+
+function setFilter(f) { currentFilter = f; renderAdminDashboard(); }
+function setSearch(val) { searchQuery = val; renderAdminDashboard(); }
+
+function setStatus(id, newStatus) {
+  const order = orders.find(o => o.id === id);
+  if (!order) return;
+  const prod = products.find(p => p.code === order.code);
+
+  // Tự động trừ/hoàn tồn kho
+  if (prod) {
+    if (newStatus === 'Đã duyệt' && order.status !== 'Đã duyệt') {
+      if (prod.stock < order.qty) {
+        alert(`Không đủ tồn kho cho "${prod.name}" (chỉ còn ${prod.stock}).`);
+        return;
+      }
+      prod.stock -= order.qty;
+    } else if (order.status === 'Đã duyệt' && newStatus !== 'Đã duyệt') {
+      prod.stock += order.qty;
+    }
+  }
+
+  order.status = newStatus;
+  saveState();
+  renderProducts();
+  renderAdminDashboard();
+}
+
+function deleteOrder(id) {
+  if (!confirm('Bạn có chắc muốn xóa đơn ' + id + '?')) return;
+  const idx = orders.findIndex(o => o.id === id);
+  if (idx > -1) {
+    const order = orders[idx];
+    if (order.status === 'Đã duyệt') {
+      const prod = products.find(p => p.code === order.code);
+      if (prod) prod.stock += order.qty;
+    }
+    orders.splice(idx, 1);
+    saveState();
+    renderProducts();
+    renderAdminDashboard();
+  }
+}
+
+function viewProof(id) {
+  const order = orders.find(o => o.id === id);
+  if (!order) return;
+  document.getElementById('proofTitle').textContent = `Biên lai đơn ${order.id} (${order.name} - ${order.cls})`;
+  document.getElementById('proofImg').src = order.proofData;
+  document.getElementById('proofOverlay').classList.add('show');
+}
+
+function resetStock() {
+  if (!confirm('Khôi phục số lượng tồn kho ban đầu?')) return;
+  products = JSON.parse(JSON.stringify(defaultProducts));
+  saveState();
+  renderProducts();
+  alert('Đã đặt lại tồn kho mặc định.');
+}
+
+function exportCSV() {
+  if (!orders.length) { alert('Chưa có đơn hàng để xuất.'); return; }
+  const headers = ['Ma don', 'Thoi gian', 'Ho ten', 'Lop', 'San pham', 'So luong', 'Tong tien', 'Trang thai'];
+  const rows = orders.map(o => [o.id, o.time, `"${o.name}"`, o.cls, `"${o.item}"`, o.qty, o.total, o.status]);
+  const csv = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'don-hang-a-little-gift.csv';
+  a.click();
+}
+
+renderProducts();
+updateBadge();
+const observer = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add('show'); observer.unobserve(e.target); }
+}), {threshold: .1});
+document.querySelectorAll('.reveal').forEach(x => observer.observe(x));
+</script>
+</body>
+</html>
